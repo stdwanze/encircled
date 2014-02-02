@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Encircled</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="height=400, user-scalable=no">
+
+		<!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+		<link rel="icon" href="img/overview_16.png" type="image/png">
+		<link href="css/styles.css" media="screen" rel="stylesheet" type="text/css" />
+		<script type='text/javascript' src="lib/jquery.1.10.2.min.js"></script>
+		<script type='text/javascript' src="lib/knockout.js"></script>
+		<script type='text/javascript' src="lib/canvaskit.all.js"></script>
+	
+		<script type='text/javascript' src="js/game.js"></script>
+	
+	</head>
+	<body>
+
+		<div id="gamepane">
+			<canvas id="gamecanvas" width="640" height="400"></canvas>
+		</div>
+		<div>
+			<a href="credits.htm">Credits</a>
+		</div>
+		<script>
+			window.addEventListener("load", function() {
+			
+				var game = new Encircled.Game( $("#gamecanvas")[0]);
+				game.run();
+			});
+
+		</script>
+	</body>
+</html>
