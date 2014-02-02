@@ -3,7 +3,24 @@ Encircled = window.Encircled || {};
 
 (function (Encircled){
 	"use strict";
+	
+	Encircled.Config = {
+		MovementSpeed : 2,
+		DifferentialSpeed : 2
+	};
+	
+	
 	Encircled.Game = (function (){
+		
+		
+		function createPaddle(game,arc)
+		{
+				return (new Encircled.PaddlePair(new CanvasKit.Point(game.canvas.width/2, game.canvas.height/2)
+				,100
+				,new CanvasKit.Point(40, 20)
+				,arc));
+		}
+		
 		
 		function game (canvas)
 		{
@@ -16,7 +33,9 @@ Encircled = window.Encircled || {};
 			
 			// intermidiate
 			this.shapes = [];
-			
+			this.paddle = null;
+			this.circle = null;
+			this.currArc = 0;
 			this.setup();
 		}
 		game.prototype = {
@@ -27,15 +46,36 @@ Encircled = window.Encircled || {};
 			},
 			setup: function ()
 			{
-				this.shapes.push(new CanvasKit.Circle(new CanvasKit.Point(this.canvas.width/2, this.canvas.height/2),100));
+				this.circle = new CanvasKit.Circle(new CanvasKit.Point(this.canvas.width/2, this.canvas.height/2),100);
+				this.paddle = createPaddle(this,0);
+				
+				this.shapes.push(this.circle);
+				this.shapes.push(this.paddle);
+			
 				
 			},
-			keyDown : function ()
+			keyDown : function (event)
 			{
+				switch(event.keyCode)
+				{
+					case 37: this.paddle.move(Encircled.Config.MovementSpeed); break;
+					case 38: this.paddle.paddleSpaceChange(Encircled.Config.DifferentialSpeed); break;
+					case 39: this.paddle.move(-Encircled.Config.MovementSpeed); break;
+					case 40: this.paddle.paddleSpaceChange(-Encircled.Config.DifferentialSpeed); break;
+					
+					
+				}
 				
 			},
 			processBegin : function ()
 			{
+						
+				
+				this.shapes = [];
+				this.shapes.push(this.circle);
+				this.shapes.push(this.paddle);
+				
+				
 				this.engine.shapes = this.shapes;
 			},
 			processEnd : function ()
