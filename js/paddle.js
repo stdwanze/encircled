@@ -68,8 +68,9 @@ Encircled = window.Encircled || {};
 		};
 		paddlepair.prototype.move = function (arcChange)
 		{
-			this.paddle1.setPosInArc(this.paddle1.currArcPosInArc + arcChange);
-			this.paddle2.setPosInArc(this.paddle1.currArcPosInArc + arcChange + this.paddleSpace);
+			var oldPos = this.paddle1.currArcPosInArc;
+			this.paddle1.setPosInArc(oldPos + arcChange);
+			this.paddle2.setPosInArc(oldPos + arcChange + this.paddleSpace);
 		};
 		paddlepair.prototype.paddleSpaceChange = function (arcChange)
 		{
