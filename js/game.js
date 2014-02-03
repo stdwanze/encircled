@@ -20,6 +20,10 @@ Encircled = window.Encircled || {};
 				,new CanvasKit.Point(40, 20)
 				,arc));
 		}
+		function createBall(game)
+		{
+			return new Encircled.Ball(new CanvasKit.Point(game.canvas.width/2, game.canvas.height/2),5, new CanvasKit.Point(1,1));
+		}
 		
 		
 		function game (canvas)
@@ -35,6 +39,7 @@ Encircled = window.Encircled || {};
 			this.shapes = [];
 			this.paddle = null;
 			this.circle = null;
+			this.ball = null;
 			this.currArc = 0;
 			this.setup();
 		}
@@ -47,11 +52,12 @@ Encircled = window.Encircled || {};
 			setup: function ()
 			{
 				this.circle = new CanvasKit.Circle(new CanvasKit.Point(this.canvas.width/2, this.canvas.height/2),100);
+				this.ball = createBall(this);
 				this.paddle = createPaddle(this,0);
 				
 				this.shapes.push(this.circle);
 				this.shapes.push(this.paddle);
-			
+				this.shapes.push(this.ball);
 				
 			},
 			keyDown : function (event)
@@ -69,12 +75,14 @@ Encircled = window.Encircled || {};
 			},
 			processBegin : function ()
 			{
-						
-				
+				if(this.ball.isOut())
+				{
+					this.ball = createBall(this);
+				}
 				this.shapes = [];
 				this.shapes.push(this.circle);
 				this.shapes.push(this.paddle);
-				
+				this.shapes.push(this.ball);
 				
 				this.engine.shapes = this.shapes;
 			},
@@ -86,5 +94,5 @@ Encircled = window.Encircled || {};
 		
 		return game;
 	}());
-	
+	return Encircled;
 }(window.Encircled || {}));

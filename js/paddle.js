@@ -77,8 +77,12 @@ Encircled = window.Encircled || {};
 			this.paddleSpace = (this.paddleSpace + arcChange) % 360;
 			this.move(0);
 		};
+		paddlepair.prototype.getAABB = function ()
+		{
+			return new [this.paddle1.getAABB(), this.paddle2.getAABB()];
+		};
 		return paddlepair;
 		
 	}());
-	
+	return Encircled;
 }(window.Encircled || {}));
