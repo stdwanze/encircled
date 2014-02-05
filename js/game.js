@@ -75,10 +75,12 @@ Encircled = window.Encircled || {};
 			},
 			processBegin : function ()
 			{
-				if(this.ball.isOut())
+				
+				if(this.ball.isOut() || this.paddle.collideBall(this.ball) != null)
 				{
 					this.ball = createBall(this);
 				}
+				
 				this.shapes = [];
 				this.shapes.push(this.circle);
 				this.shapes.push(this.paddle);

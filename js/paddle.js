@@ -8,20 +8,24 @@ Encircled = window.Encircled || {};
 		{
 			paddle.cosX =  Math.cos(paddle.currArcPosInRad);
 			paddle.sinY =  Math.sin(paddle.currArcPosInRad);
+			
+			paddle.location = new CanvasKit.Point(paddle.center.x + (paddle.sinY*paddle.radius) , paddle.center.y+(paddle.cosX*paddle.radius));
 		}
 		
 		function paddle (center,radius,size,arc)
 		{
 			this.color = "#000000";
 			this.paddleSize = size;
+			this.radius = radius;
+			this.center = center;
 			this.cosX = 0;
 			this.sinY = 0;
 			this.currArcPosInArc = arc;
 			this.currArcPosInRad = 0;
 			this.setPosInArc( arc );
-			updatePos(this);
 			
-			CanvasKit.EngineElement.call(this,center,radius);
+			CanvasKit.EngineElement.call(this,center,this.paddleSize);
+			updatePos(this);
 		}
 		
 		paddle.prototype = new CanvasKit.EngineElement();
@@ -34,14 +38,25 @@ Encircled = window.Encircled || {};
 			updatePos(this);
 		};
 		
+		paddle.prototype.getAABB = function ()
+		{
+			var topLeft = new CanvasKit.Point(this.location.x-this.paddleSize.x/2, this.location.y-this.paddleSize.y/2);
+			return new CanvasKit.AABB(topLeft,this.paddleSize);
+		};
 		paddle.prototype.render = function (canvas, ctxt)
 		{
 			ctxt.save();
-			ctxt.translate( this.location.x + (this.sinY*this.size) , this.location.y+(this.cosX*this.size));
+			ctxt.translate( this.location.x,this.location.y);
 			ctxt.rotate( -this.currArcPosInRad);
 			ctxt.fillStyle = this.color;
 			ctxt.fillRect(-this.paddleSize.x/2, -this.paddleSize.y/2, this.paddleSize.x, this.paddleSize.y);
 			ctxt.restore();
+			
+		/*	var aabb = this.getAABB();
+			ctxt.fillStyle = this.color;
+			ctxt.fillRect(aabb.x,aabb.y,aabb.width, aabb.height);
+			*/
+			
 		};
 		
 		return paddle;
@@ -77,9 +92,33 @@ Encircled = window.Encircled || {};
 			this.paddleSpace = (this.paddleSpace + arcChange) % 360;
 			this.move(0);
 		};
-		paddlepair.prototype.getAABB = function ()
+		paddlepair.prototype.collideBall = function (ball)
 		{
-			return new [this.paddle1.getAABB(), this.paddle2.getAABB()];
+			var collide = function (paddle,ball)
+			{
+				var rotMat = CanvasKit.Algorithm.getRotationMatrixFor(paddle.currArcPosInArc);
+				var center = paddle.location.clone().reverse();
+				
+				var ballLocClone = ball.location.clone();
+				ballLocClone.translate(center);
+				ballLocClone = rotMat.mult(ballLocClone);
+				ballLocClone.translate(center.reverse());
+				
+				var collidableBall = new CanvasKit.Circle(ballLocClone, ball.size);
+				
+				if(CanvasKit.Algorithm.collideElements(collidableBall,paddle)) return true;
+				else return false;
+			};
+			
+			if(collide(this.paddle1,ball))
+			{
+				return this.paddle1;
+			}
+			else if(collide(this.paddle2,ball))
+			{
+				return this.paddle2;
+			}
+			return null;
 		};
 		return paddlepair;
 		
